@@ -85,7 +85,7 @@ int HLDquery(int u, int v) {
 	return ans;
 }
  
-signed main() {
+int32_t main() {
 	ios::sync_with_stdio(0);cin.tie(0);
 	int q, n, a, b, c, k, ti, l, type;
  
