@@ -1,0 +1,124 @@
+#include <bits/stdc++.h>
+#include <bits/extc++.h>//
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+using namespace std;
+using ll = long long ;
+#define pb            push_back
+#define ld            long double
+#define sz            size()
+#define foo(i,a,b)    for (ll i=a;i<b;i++)
+#define pll           pair<ll,ll>
+#define ed            "\n"
+#define ct            cout
+#define m_p           make_pair
+#define vi            vector<ll>
+#define vpll           vector<pll>
+#define ff            first
+#define ss            second
+#define mod           998244353
+#define int long long
+ 
+// for fast hashing
+const int RANDOM = chrono::high_resolution_clock::now().time_since_epoch().count();
+struct chash { // To use most bits rather than just the lowest ones:
+	const uint64_t C = ll(4e18 * acos(0)) | 71; // large odd number
+	ll operator()(ll x) const { return __builtin_bswap64((x^RANDOM)*C); }
+};
+template<class K,class V> using ht = gp_hash_table<K,V,chash>;
+//__gnu_pbds::gp_hash_table<ll, int, chash> ht({},{},{},{}, {1 << 16});
+ 
+//oset<int>s:s.find_by_order(k):Kth element in "s",s.order_of_key(k):Number of item strictly lessthan k
+template<class T> using oset =tree<T, null_type, less<T>, rb_tree_tag,tree_order_statistics_node_update> ;
+vector<bool> vis;
+vector<vector<int> > g, gr;
+stack<int> st;
+vector<int> component;
+vector<vector<int> > sccs;
+ 
+void dfs1(int i)
+{
+   vis[i]=true;
+    for(auto it: g[i])
+    {
+       if(!vis[it])
+       {
+          dfs1(it);
+       }
+    }
+   st.push(i);
+}
+ 
+void dfs2(int i)
+{
+vis[i]=true;
+for(auto it: gr[i])
+{
+    if(!vis[it])
+   {
+       dfs2(it);
+   }
+}
+component.push_back(i);
+}
+void solve(){
+    int n, m;
+cin>>n >> m;
+g.resize(n);
+gr.resize(n);
+for(int i=0; i<m; i++)
+{
+   int u,v;
+   cin>>u>>v;
+   u--; // to make u and v on 0-based indexing
+   v--;
+   g[u].push_back(v);
+   gr[v].push_back(u);
+}
+vis.assign(n,false);
+for(int i=0; i<n; i++)
+{
+    if(!vis[i])
+    {
+       dfs1(i);
+    }
+}
+vis.assign(n,false);
+while(!st.empty())
+{
+int t=st.top();
+st.pop();
+if(vis[t])
+     continue;
+component.clear();
+dfs2(t); // Run DFS in reverse graph
+         // in topological order of original graph
+sccs.push_back(component);
+}
+    vector<int> ans(n);
+    foo(i,0,sccs.size()){
+        foo(j,0,sccs[i].size()) ans[sccs[i][j]] = i+1;
+    }
+    ct<<sccs.size()<<ed;
+    foo(i,0,n) ct<<ans[i]<<" ";
+}
+ 
+int32_t main()
+{
+  ios_base::sync_with_stdio(false);
+  cin.tie(0);cout.tie(0);
+  /*#ifndef ONLINE_JUDGE
+    freopen("input.txt","r",stdin);
+    freopen("output.txt","w",stdout);
+  #endif
+*/
+ 
+  int tt =1; //cin>>tt;
+ 
+  while(tt--){
+ 
+    solve();
+  }
+  return 0;
+}
